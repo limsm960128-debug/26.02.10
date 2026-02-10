@@ -1,0 +1,31 @@
+name: 매일 아침 주식 분석
+
+on:
+  schedule:
+    - cron: '30 22 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: 코드 체크아웃
+      uses: actions/checkout@v3
+      
+    - name: Python 설정
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: 라이브러리 설치
+      run: |
+        pip install finance-datareader beautifulsoup4 requests pandas numpy
+        
+    - name: 주식 분석 실행
+      env:
+        KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
+        KAKAO_REFRESH_TOKEN: ${{ secrets.KAKAO_REFRESH_TOKEN }}
+        KAKAO_REDIRECT_URI: ${{ secrets.KAKAO_REDIRECT_URI }}
+      run: |
+        python stock_analyzer_final_v2.py
